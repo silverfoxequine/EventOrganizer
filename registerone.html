@@ -1,0 +1,221 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4" id="eventName"></h1>
+            <p class="lead">Registration</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <label class="col-sm-4">First Name:</label>
+            <input class="form-control col-sm-8" name="firstName" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Last Name:</label>
+            <input class="form-control col-sm-8" name="lastName" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Address:</label>
+            <input class="form-control col-sm-8" name="address" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">City:</label>
+            <input class="form-control col-sm-8" name="city" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Province/State:</label>
+            <input class="form-control col-sm-8" name="province" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Postal Code/Zip (A1A 1A1):</label>
+            <input class="form-control col-sm-8" name="postalCode" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Birth Date:</label>
+            <input class="form-control col-sm-8" name="birthDate" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Email:</label>
+            <input class="form-control col-sm-8" name="email" type="email" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Telephone (xxx-xxx-xxxx):</label>
+            <input class="form-control col-sm-8" name="telephone" />
+        </div>
+        <hr />
+        <br />
+        <h3>Parent Info:</h3>
+        <div class="row">
+            <label class="col-sm-4">Parent 1 First Name:</label>
+            <input class="form-control col-sm-8" name="p1FirstName" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Parent 1 Last Name:</label>
+            <input class="form-control col-sm-8" name="p1LastName" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Parent 1 Relation:</label>
+            <input class="form-control col-sm-8" name="p1Relation" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Parent 1 Email:</label>
+            <input class="form-control col-sm-8" name="p1Email" type="email" />
+        </div>
+        <hr />
+        <br />
+        <h3>Sport Info:</h3>
+        <div class="row">
+            <label class="col-sm-4">youtube video link #1:</label>
+            <input class="form-control col-sm-8" name="youtube1" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">youtube video link #2:</label>
+            <input class="form-control col-sm-8" name="youtube2" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">youtube video link #3:</label>
+            <input class="form-control col-sm-8" name="youtube3" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">youtube video link #4:</label>
+            <input class="form-control col-sm-8" name="youtube4" />
+        </div>
+        <hr />
+        <br />
+        <h3>Additional Player Info</h3>
+        <div class="row">
+            <label class="col-sm-4">Horse Name:</label>
+            <input class="form-control col-sm-8" name="horseName" />
+        </div>
+        <hr />
+        <div class="row">
+            <label class="col-sm-4">Check this box if you qualify for adult amature status:</label>
+            <input class="" name="adultAmature" type="checkbox" />
+        </div>
+        <hr />
+        <br />
+        <button class="btn btn-primary" onclick="submitOne()">Next</button>
+    </div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+<script>
+
+
+    var param = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+    var eventId = param("eventId");
+    getEventData();
+    function submitOne() {
+        var saveData = [];
+        $('input').each(function () {
+            saveData.push({
+                name: $(this).name(),
+                value: $(this).val()
+            });
+        })
+        var regId = localStorage.getItem("regId");
+        if (!regId) {
+            $.ajax({
+                url: "https://api.myjson.com/bins",
+                type: "POST",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (ret, textStatus, jqXHR) {
+                    regId = ret.uri;
+                    localStorage.setItem("regId", regId);
+                    getEventData(function () {
+                        event.registrations.push(regId);
+                        updateInfo(regId, saveData);
+                    });
+                }
+            });
+        } else {
+            updateInfo(regId, saveData);
+        }
+    }
+    function updateInfo(regId, saveData) {
+        var data = localStorage.getItem("registerOne");
+        if (data) {
+            data = JSON.parse(data);
+            for (var i in data){
+                data[i].value = saveData[i].value;
+            }
+            
+        }
+        $.ajax({
+            url: regId,
+            type: "PUT",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+            }
+        });
+    }
+    window.updateEvent = function () {
+        var val = JSON.stringify(event);
+        var eventId = param("eventId");
+        $.ajax({
+            url: `https://api.myjson.com/bins/${eventId}`,
+            type: "PUT",
+            data: val,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data, textStatus, jqXHR) {
+
+            }
+        });
+    }
+    function getEventData(retFn) {
+        $.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
+            window.event = json;
+            $("#eventName").html(json.name);
+            retFn && retFn();
+        });
+    }
+
+</script>
+
+</html>

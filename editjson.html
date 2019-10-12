@@ -1,0 +1,51 @@
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <input type="text" class="form-control" onchange="loadJson(this)">
+    
+    <textarea rows="20" cols="300" class="form-control" >
+    </textarea>
+    <button class="btn btn-primary" onclick="updateJson()">Save</button>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<script>
+    var url = localStorage.getItem('url');
+    if (url) {
+        $('input').val(url);
+        loadJson({value:url});
+    }
+    function loadJson(dom){
+        localStorage.setItem("url", dom.value);
+        $.get(`${dom.value}?pretty=1`, function (json) {
+            $("textarea").html(JSON.stringify(json, null, 2));
+        });
+    }
+    function updateJson(textarea) {
+        var me = $("textarea");
+        var val = me.val();
+        $.ajax({
+            url:$('input').val(),
+            type:"PUT",
+            data: val,
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(data, textStatus, jqXHR){
+                console.log(data);
+            }
+        });   
+    }
+
+</script>
+
+</html>
