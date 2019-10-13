@@ -1,9 +1,9 @@
 getEventData(function () {
-    
-    var regData = localStorage.getItem("registerTwo");
+    var eventId = param("eventId");
+    var regData = localStorage.getItem("registerTwo"+eventId);
     if (!regData) {
         alert("Registration info not found. Please try again");
-        location.href ="registerone.html?eventId="+param("eventId");
+        location.href ="registerone.html?eventId="+eventId;
     }
     var regJson = JSON.parse(regData);
     var totalCost = 0;

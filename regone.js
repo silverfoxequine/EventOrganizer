@@ -14,7 +14,7 @@ function submitOne() {
             value: value
         });
     })
-    var regId = localStorage.getItem("regId");
+    var regId = localStorage.getItem("regId"+eventId);
     if (!regId) {
         $.ajax({
             url: "https://api.myjson.com/bins",
@@ -24,7 +24,7 @@ function submitOne() {
             dataType: "json",
             success: function (ret, textStatus, jqXHR) {
                 regId = ret.uri;
-                localStorage.setItem("regId", regId);
+                localStorage.setItem("regId"+eventId, regId);
                 getEventData(function () {
                     event.registrations.push(regId);
                     updateEvent();

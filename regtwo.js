@@ -11,22 +11,45 @@ getEventData(function () {
                     <input type="checkbox" class="form-check-input" name="${division.name}${clazz.name}">
                     ${clazz.name} : $${clazz.price}</label>
                 </div>`).appendTo(classContainer);
+            inputCont.find("input").click(makeCheckClickFunction(division, clazz))
         }
     }
-    
-    var regData = localStorage.getItem("registerTwo");
+
+    var eventId = param("eventId");
+    var regData = localStorage.getItem("registerTwo" + eventId);
     if (regData) {
         var regDataJson = JSON.parse(regData);
         for (var item of regDataJson) {
             var input = $(`input[name="${item.name}"]`);
             if (input.attr("type") == "checkbox") {
                 input[0].checked = item.value;
+                if (item.value) {
+                    var youtubeData = regDataJson.filter(d => d.name == item.name + "youtube")[0];
+                    if (youtubeData) {
+                        input.parent().append(`<div data-id="${item.name}youtube">
+                        YouTube Link: 
+                        <input type='text' name="${youtubeData.name}" value="${youtubeData.value}" />
+                        </div>`);
+                    }
+                }
             } else {
                 $(`input[name="${item.name}"]`).val(item.value);
             }
         }
     }
 })
+function makeCheckClickFunction(division, clazz) {
+    return function () {
+        var me = $(this);
+        if (me[0].checked) {
+            me.parent().append(`<div data-id="${division.name}${clazz.name}youtube">
+                YouTube Link: <input type='text' name="${division.name}${clazz.name}youtube" />
+                </div>`)
+        } else {
+            me.parent().find(`div[data-id='${division.name}${clazz.name}youtube']`).remove();
+        }
+    }
+}
 function submitTwo() {
     var saveData = [];
     $('input').each(function () {
@@ -43,26 +66,17 @@ function submitTwo() {
     var regId = localStorage.getItem("regId");
     if (!regId) {
         alert("Couldn't find info from step one, redirecting to step one");
-        location.href = "registerone.html?eventId=" +param("eventId");
+        location.href = "registerone.html?eventId=" + param("eventId");
     } else {
         updateInfo(regId, saveData);
     }
 }
 function updateInfo(regId, saveData) {
-    var data = localStorage.getItem("registerTwo");
-    if (data) {
-        data = JSON.parse(data);
-        for (var i in data) {
-            data[i].value = saveData[i].value;
-        }
-    } else {
-        data = saveData;
-    }
+    var eventId = param("eventId");
     getRegData(regId, function (regJson) {
-        regJson.registerTwo = data;
-        data = JSON.stringify(data);
-        localStorage.setItem('registerTwo', data);
-        var eventId = param("eventId");
+        regJson.registerTwo = saveData;
+        var data = JSON.stringify(saveData);
+        localStorage.setItem('registerTwo' + eventId, data);
         $.ajax({
             url: regId,
             type: "PUT",
