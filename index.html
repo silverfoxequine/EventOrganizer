@@ -1,26 +1,97 @@
 <html>
-	<head>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		</head>
-	<body>
-	<div class="jumbotron jumbotron-fluid">
-	  <div class="container">
-		<h1 class="display-4">Event Organizer</h1>
-		<p class="lead">List of all events:</p>
-	  </div>
-	</div>
-	<div class="list-group" id="events">
-	</div>
-	</body>
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<script>
-	$.get("https://api.myjson.com/bins/t63va", function(json){
-		for (var event of json.events) {
-			$("#events").append(`<a href="admin.html?eventId=${event.eventId}" class="list-group-item list-group-item-action">${event.name}</a>`)
+
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+		.fa {
+
+			padding: 3px;
 		}
-	})
+
+		.fa:hover {
+			color: blue;
+			outline: 1px solid blue;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="jumbotron jumbotron-fluid">
+		<div class="container">
+			<h1 class="display-4">Event Organizer</h1>
+			<p class="lead">List of all events:</p>
+		</div>
+	</div>
+	<div class="container">
+		<div class="list-group" id="events">
+		</div>
+		<button class="btn btn-primary" onclick="addEvent()" id="addEventButton">+</button>
+		<button class="btn btn-primary" onclick="saveEvent()" id="saveEventButton" style="display:none">Save</button>
+	</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+<script>
+	$.get("https://api.myjson.com/bins/t63va", function (json) {
+		window.eventData = json;
+		for (var event of json.events) {
+			$("#events").append(`<a href="registrations.html?eventId=${event.eventId}" class="list-group-item list-group-item-action">
+				${event.name} : ${event.date}
+				<i class="fa fa-pencil" style="float:right" 
+					onclick="location.href='admin.html?eventId=${event.eventId}';return false;">
+				</i>
+				</a>`);
+		}
+	});
+	function addEvent() {
+		var events = $("#events");
+		events.append("Name: <input id='newName' class='form-control'>");
+		events.append("Date: <input id='newDate' class='form-control'>");
+		$("#addEventButton").hide();
+		$("#saveEventButton").show();
+	}
+	function saveEvent() {
+		var postData = {
+			name: $('#newName').val(),
+			divisions: [],
+			registrations: []
+		};
+        $.ajax({
+            url: "https://api.myjson.com/bins",
+            type: "POST",
+            data: JSON.stringify(postData),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (ret, textStatus, jqXHR) {
+				var regIds = ret.uri.split("/");
+				var newEvent = {
+					name: $('#newName').val(),
+					date: $('#newDate').val(),
+					eventId: regIds[regIds.length -1]
+				};
+				eventData.events.push(newEvent);
+				$.ajax({
+					url: "https://api.myjson.com/bins/t63va",
+					type: "PUT",
+					data: JSON.stringify(eventData),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (data, textStatus, jqXHR) {
+						location.reload();
+					}
+				});
+            }
+        });
 		
-	</script>
+	}
+
+</script>
+
 </html>

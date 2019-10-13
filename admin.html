@@ -5,7 +5,7 @@
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
-<body>
+<body style="margin-bottom: 50px">
 	<div class="jumbotron jumbotron-fluid">
 		<div class="container">
 			<h1 class="display-4" id="eventName"></h1>
@@ -16,7 +16,7 @@
 		<h3>Divisions</h3>
 		<div class="list-group container" id="divisions">
 		</div>
-		<button class="btn btn-primary" onclick="newDivision()">+</button>
+		<button id="newDivisionButton" class="btn btn-primary" onclick="newDivision()">+</button>
 	</div>
 
 </body>
@@ -27,71 +27,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 	crossorigin="anonymous"></script>
-<script>
-
-
-	var param = function getUrlParameter(sParam) {
-		var sPageURL = window.location.search.substring(1),
-			sURLVariables = sPageURL.split('&'),
-			sParameterName,
-			i;
-
-		for (i = 0; i < sURLVariables.length; i++) {
-			sParameterName = sURLVariables[i].split('=');
-
-			if (sParameterName[0] === sParam) {
-				return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-			}
-		}
-	};
-	var eventId = param("eventId");
-	$.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
-		window.data = json;
-		$("#eventName").html(json.name);
-		for (var division of json.divisions) {
-			var price = "$" + division.price;
-			$('#divisions').append(`<div class="list-group-item">${division.name} : ${price}
-					<button class='btn btn-default' style='float:right' onclick='deleteDivision("${division.name}")'>x</button>
-			</div>`)
-		}
-	});
-	function newDivision() {
-		var divList = $('#divisions');
-		var newDiv = $('<div class="row"></div>').appendTo(divList);
-		newDiv.append("Name: <input class='form-control col-6' id='newName'/>");
-		newDiv.append("Price: <input class='form-control col-4' id='newPrice'/>");
-		newDiv.append("Description: <input class='form-control col-8' id='newDesc'/>");
-		$("<button class='btn btn-primary col-2'>Save</button>")
-			.click(function () {
-				var division = {
-					name: $('#newName').val(),
-					price: parseFloat($('#newPrice').val()),
-					description: $('#newDesc').val()
-				}
-				data.divisions.push(division);
-				updateData();
-			})
-			.appendTo(newDiv);
-	}
-	function deleteDivision(name) {
-		var division = data.divisions.filter(d=>d.name==name)[0];
-		data.divisions.splice(data.divisions.indexOf(division), 1);
-		updateData();
-	}
-	window.updateData = function() {
-		var val = JSON.stringify(data);
-		var eventId = param("eventId");
-        $.ajax({
-            url:`https://api.myjson.com/bins/${eventId}`,
-            type:"PUT",
-            data: val,
-            contentType:"application/json; charset=utf-8",
-            dataType:"json",
-            success: function(data, textStatus, jqXHR){
-				location.reload();
-            }
-        });   
-	}
-</script>
+<script src="common.js"></script>
+<script src="admin.js"></script>
 
 </html>

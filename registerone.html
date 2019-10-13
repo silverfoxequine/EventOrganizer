@@ -110,12 +110,12 @@
         </div>
         <hr />
         <div class="row">
-            <label class="col-sm-4">Check this box if you qualify for adult amature status:</label>
+            <label class="col-sm-4">Check this box if you qualify for adult amateur status:</label>
             <input class="" name="adultAmature" type="checkbox" />
         </div>
         <hr />
         <br />
-        <button class="btn btn-primary" onclick="submitOne()">Next</button>
+        <button class="btn btn-primary" onclick="submitOne()" style="margin-bottom:30px;">Next</button>
     </div>
 
 </body>
@@ -126,96 +126,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
-<script>
-
-
-    var param = function getUrlParameter(sParam) {
-        var sPageURL = window.location.search.substring(1),
-            sURLVariables = sPageURL.split('&'),
-            sParameterName,
-            i;
-
-        for (i = 0; i < sURLVariables.length; i++) {
-            sParameterName = sURLVariables[i].split('=');
-
-            if (sParameterName[0] === sParam) {
-                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-            }
-        }
-    };
-    var eventId = param("eventId");
-    getEventData();
-    function submitOne() {
-        var saveData = [];
-        $('input').each(function () {
-            saveData.push({
-                name: $(this).name(),
-                value: $(this).val()
-            });
-        })
-        var regId = localStorage.getItem("regId");
-        if (!regId) {
-            $.ajax({
-                url: "https://api.myjson.com/bins",
-                type: "POST",
-                data: '{}',
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (ret, textStatus, jqXHR) {
-                    regId = ret.uri;
-                    localStorage.setItem("regId", regId);
-                    getEventData(function () {
-                        event.registrations.push(regId);
-                        updateInfo(regId, saveData);
-                    });
-                }
-            });
-        } else {
-            updateInfo(regId, saveData);
-        }
-    }
-    function updateInfo(regId, saveData) {
-        var data = localStorage.getItem("registerOne");
-        if (data) {
-            data = JSON.parse(data);
-            for (var i in data){
-                data[i].value = saveData[i].value;
-            }
-            
-        }
-        $.ajax({
-            url: regId,
-            type: "PUT",
-            data: '{}',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data, textStatus, jqXHR) {
-
-            }
-        });
-    }
-    window.updateEvent = function () {
-        var val = JSON.stringify(event);
-        var eventId = param("eventId");
-        $.ajax({
-            url: `https://api.myjson.com/bins/${eventId}`,
-            type: "PUT",
-            data: val,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data, textStatus, jqXHR) {
-
-            }
-        });
-    }
-    function getEventData(retFn) {
-        $.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
-            window.event = json;
-            $("#eventName").html(json.name);
-            retFn && retFn();
-        });
-    }
-
-</script>
+<script src="common.js"></script>
+<script src="regone.js"></script>
 
 </html>
