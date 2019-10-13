@@ -37,19 +37,10 @@ function submitOne() {
     }
 }
 function updateInfo(regId, saveData) {
-    var data = localStorage.getItem("registerOne");
-    if (data) {
-        data = JSON.parse(data);
-        for (var i in data) {
-            data[i].value = saveData[i].value;
-        }
-
-    } else {
-        data = saveData;
-    }
+    
     getRegData(regId, function (regJson) {
-        regJson.registerOne = data;
-        data = JSON.stringify(data);
+        regJson.registerOne = saveData;
+        var data = JSON.stringify(saveData);
         localStorage.setItem('registerOne', data);
         var eventId = param("eventId");
         $.ajax({
