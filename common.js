@@ -18,6 +18,7 @@ function getEventData(retFn) {
     $.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
         window.event = json;
         $("#eventName").html(json.name);
+        $("#eventDate").html(json.date);
         retFn && retFn();
     });
 }

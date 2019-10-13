@@ -1,30 +1,47 @@
 var eventId = param("eventId");
 $.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
     window.data = json;
-    $("#eventName").html(json.name);
+    $("#eventName").append(`${json.name} ${json.date}<i class="fa fa-pencil" onclick="editName()"></i>`);
     var divisions = $('#divisions');
     for (var division of json.divisions) {
-        var container = $(`<div class="list-group-item">${division.name}
-                <button class='btn btn-default' style='float:right' onclick='deleteDivision("${division.name}")'>x</button>
+        var container = $(`<div class="list-group-item" data-id="${division.name}">${division.name} 
+                <div style="float: right">
+                    <i class="fa fa-pencil" onclick="editDivision('${division.name}')"></i>
+                    <button class='btn btn-default' onclick='deleteDivision("${division.name}")'>x</button>
+                </div>
         </div>`).appendTo(divisions);
         for (var clazz of division.classes) {
             container.append(`[${clazz.name}: $${clazz.price}] `);
         }
     }
 });
+function editName() {
+    $("#eventName").empty();
+    $("#eventName").append(`
+        <input id="newName" value="${data.name}" />
+        <input id="newDate" value="${data.date}" />
+    `)
+    $('<button class="btn btn-primary">Save</button>')
+        .click(function () {
+            data.name = $('#newName').val();
+            data.date = $('#newDate').val();
+            updateData();
+        })
+        .appendTo($("#eventName"))
+}
 function newDivision() {
     var divList = $('#divisions');
     var newDiv = $('<div class=""></div>').appendTo(divList);
     newDiv.append("Name: <input class='form-control col-11' id='newName'/>");
     var classContainer = $(`<div style="margin-left: 50px" class="classes">Classes
         <input class='form-control classname' value='Class A'>
-        <input class='form-control classprice' value='20'>
+        <input class='form-control classprice' value='45'>
         <hr>
     </div>`).appendTo(newDiv);
     $("<button id='addClasses' class='btn btn-primary'>+</button>")
-        .click(function(){
-            $('#addClasses').before(`<input class='form-control classname' value='Class A'>
-            <input class='form-control classprice' value='20'>
+        .click(function () {
+            $('#addClasses').before(`<input class='form-control classname' value=''>
+            <input class='form-control classprice' value='45'>
             <hr>`)
         })
         .appendTo(classContainer);
@@ -35,10 +52,10 @@ function newDivision() {
                 classes: []
             };
             var classInputs = $(".classes input");
-            for (var i=0;i<classInputs.length;i+=2) {
+            for (var i = 0; i < classInputs.length; i += 2) {
                 var clazz = {
                     name: $(classInputs[i]).val(),
-                    price: parseFloat($(classInputs[i+1]).val())
+                    price: parseFloat($(classInputs[i + 1]).val())
                 }
                 division.classes.push(clazz);
             }
@@ -50,21 +67,57 @@ function newDivision() {
     $("#newDivisionButton").hide();
 }
 function deleteDivision(name) {
-    var division = data.divisions.filter(d=>d.name==name)[0];
+    var division = data.divisions.filter(d => d.name == name)[0];
     data.divisions.splice(data.divisions.indexOf(division), 1);
     updateData();
 }
-window.updateData = function() {
+function editDivision(name) {
+    var division = data.divisions.filter(d => d.name == name)[0];
+    var divisDiv = $(`div[data-id='${name}']`);
+    divisDiv.empty();
+    divisDiv.append(`Name: <input class='form-control col-11' id='newName' value="${name}"/>`);
+    var classContainer = $(`<div style="margin-left: 50px" class="classes">Classes</div>`).appendTo(divisDiv);
+    for (var clazz of division.classes) {
+        classContainer.append(`<input class='form-control classname' value='${clazz.name}'>
+            <input class='form-control classprice' value='${clazz.price}'>
+            <hr>`);
+    }
+
+    $("<button id='addClasses' class='btn btn-primary'>+</button>")
+        .click(function () {
+            $('#addClasses').before(`<input class='form-control classname' value=''>
+            <input class='form-control classprice' value='45'>
+            <hr>`);
+        })
+        .appendTo(classContainer);
+    $("<button id='saveDivis' class='btn btn-primary'>Save</button>")
+        .click(function () {
+            division.name = $("#newName").val();
+            division.classes = [];
+            var classInputs = $(".classes input");
+            for (var i = 0; i < classInputs.length; i += 2) {
+                var clazz = {
+                    name: $(classInputs[i]).val(),
+                    price: parseFloat($(classInputs[i + 1]).val())
+                }
+                division.classes.push(clazz);
+            }
+            updateData();
+        })
+        .appendTo(divisDiv);
+
+}
+window.updateData = function () {
     var val = JSON.stringify(data);
     var eventId = param("eventId");
     $.ajax({
-        url:`https://api.myjson.com/bins/${eventId}`,
-        type:"PUT",
+        url: `https://api.myjson.com/bins/${eventId}`,
+        type: "PUT",
         data: val,
-        contentType:"application/json; charset=utf-8",
-        dataType:"json",
-        success: function(data, textStatus, jqXHR){
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data, textStatus, jqXHR) {
             location.reload();
         }
-    });   
+    });
 }
