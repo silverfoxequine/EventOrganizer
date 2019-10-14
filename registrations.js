@@ -5,6 +5,7 @@ getEventData(function () {
     registerLink.attr("href", "registerone.html?eventId=" + param("eventId"));
     var data = [];
     getAllRegistrations(data).then(function () {
+        data.sort((a, b) => a.index > b.index ? 1 : -1);
         window.data = data;
         for (var i in data) {
             var reg = data[i];
@@ -74,14 +75,17 @@ function toggleDetails(index) {
 }
 function getAllRegistrations(data) {
     var promises = [];
+    var i = 0;
     for (var reg of event.registrations) {
-        promises.push(getReg(data, reg));
+        promises.push(getReg(data, reg, i));
+        i++;
     }
     return Promise.all(promises);
 }
-function getReg(data, reg) {
+function getReg(data, reg, index) {
     return $.get(reg, function (json) {
         json.url = reg;
+        json.index = index;
         data.push(json);
     })
 }
