@@ -21,7 +21,7 @@ getEventData(function () {
             }
             divContainer = $(`<div class='list-group-item' onclick="toggleDetails(${i})">
                 <h4>${reg.registerOne[0].value} ${reg.registerOne[1].value} : $${totalCost}
-                <i class="fa fa-trash" style="float:right" onclick="del(${i})"></i>
+                <i class="fa fa-trash" style="float:right" onclick="del('${reg.url}')"></i>
                 </h4>
                 <div class="row" data-id="regrow${i}" style="display: none">
                 </div>
@@ -37,7 +37,11 @@ getEventData(function () {
                     for (var clazz of division.classes) {
                         var regClass = reg.registerTwo.filter(c => c.name == division.name + clazz.name)[0]
                         if (regClass.value) {
+                            var youtube = reg.registerTwo.filter(c => c.name == division.name + clazz.name + "youtube")[0];
                             rightContainer.append(`<div>${division.name} ${clazz.name}</div>`);
+                            if (youtube) {
+                                rightContainer.append(`<div>${youtube.value}</div>`);
+                            }
                         }
                     }
                 }
@@ -46,11 +50,11 @@ getEventData(function () {
     });
 
 });
-function del(i){
-    
+function del(url) {
+
     getEventData(function () {
         var eventId = param("eventId");
-        event.registrations.splice(i,1);
+        event.registrations.splice(event.registrations.indexOf(url), 1);
         $.ajax({
             url: `https://api.myjson.com/bins/${eventId}`,
             type: "PUT",
@@ -62,6 +66,7 @@ function del(i){
             }
         });
     });
+    return false;
 }
 function toggleDetails(index) {
     var reg = data[index];

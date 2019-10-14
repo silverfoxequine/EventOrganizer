@@ -63,10 +63,11 @@ function submitTwo() {
             value: value
         });
     })
-    var regId = localStorage.getItem("regId");
+    var eventId = param("eventId");
+    var regId = localStorage.getItem("regId" + eventId);
     if (!regId) {
         alert("Couldn't find info from step one, redirecting to step one");
-        location.href = "registerone.html?eventId=" + param("eventId");
+        location.href = "registerone.html?eventId=" + eventId;
     } else {
         updateInfo(regId, saveData);
     }
