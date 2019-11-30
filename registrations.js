@@ -14,7 +14,7 @@ getEventData(function () {
                 for (var division of event.divisions) {
                     for (var clazz of division.classes) {
                         var regClass = reg.registerTwo.filter(c => c.name == division.name + clazz.name)[0]
-                        if (regClass.value) {
+                        if (regClass && regClass.value) {
                             totalCost += clazz.price;
                         }
                     }
