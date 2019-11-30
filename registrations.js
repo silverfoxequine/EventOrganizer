@@ -37,7 +37,7 @@ getEventData(function () {
                 for (var division of event.divisions) {
                     for (var clazz of division.classes) {
                         var regClass = reg.registerTwo.filter(c => c.name == division.name + clazz.name)[0]
-                        if (regClass.value) {
+                        if (regClass && regClass.value) {
                             var youtube = reg.registerTwo.filter(c => c.name == division.name + clazz.name + "youtube")[0];
                             rightContainer.append(`<div>${division.name} ${clazz.name}</div>`);
                             if (youtube) {
