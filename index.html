@@ -49,6 +49,12 @@
 				<i class="fa fa-pencil" style="float:right" 
 					onclick="location.href='admin.html?eventId=${event.eventId}';return false;">
 				</i>
+				<i class="fa fa-copy" style="float:right" 
+					onclick="copyEvent('${event.eventId}');return false;">
+				</i>
+				<i class="fa fa-trash" style="float:right" 
+					onclick="deleteEvent('${event.eventId}');return false;">
+				</i>
 				</a>`);
 		}
 	});
@@ -94,7 +100,71 @@
         });
 		
 	}
-
+    function copyEvent(id) {
+        $.get(`https://api.myjson.com/bins/${id}`, function (json) {
+            var newname = json.name + Math.floor(Math.random() * 10000);
+            var postData = {
+			    name: newname,
+			    date: json.date,
+			    divisions: [],
+			    registrations: []
+            };
+            
+            for (var division of json.divisions) {
+                postData.divisions.push({
+                    name: division.name,
+                    classes: division.classes
+                });
+            }
+            $.ajax({
+                url: "https://api.myjson.com/bins",
+                type: "POST",
+                data: JSON.stringify(postData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (ret, textStatus, jqXHR) {
+				    var regIds = ret.uri.split("/");
+				    var newEvent = {
+					    name: newname,
+					    date: json.date,
+					    eventId: regIds[regIds.length -1]
+				    };
+				    eventData.events.push(newEvent);
+				    $.ajax({
+					    url: "https://api.myjson.com/bins/t63va",
+					    type: "PUT",
+					    data: JSON.stringify(eventData),
+					    contentType: "application/json; charset=utf-8",
+					    dataType: "json",
+					    success: function (data, textStatus, jqXHR) {
+						    location.reload();
+					    }
+				    });
+                }
+            });
+        });
+	}
+    function deleteEvent(id) {
+        var res = window.confirm("Are you sure?");
+        if (res) {
+            var eventToDelete = eventData.events.filter(e => e.eventId == id)[0];
+            if (!eventToDelete) {
+                location.reload();
+                return;
+            }
+            eventData.events.splice(eventData.events.indexOf(eventToDelete), 1);
+            $.ajax({
+                url: "https://api.myjson.com/bins/t63va",
+                type: "PUT",
+                data: JSON.stringify(eventData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    location.reload();
+                }
+            });
+        }
+	}
 </script>
 
 </html>
