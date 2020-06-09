@@ -40,8 +40,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 	crossorigin="anonymous"></script>
+<script src="common.js"></script>
 <script>
-	$.get("https://api.myjson.com/bins/t63va", function (json) {
+	var globalJson = "5edf79802454c200177a2702";
+	getEventData(function (json) {
 		window.eventData = json;
 		for (var event of json.events) {
 			$("#events").append(`<a href="registrations.html?eventId=${event.eventId}" class="list-group-item list-group-item-action">
@@ -57,7 +59,7 @@
 				</i>
 				</a>`);
 		}
-	});
+	}, globalJson);
 	function addEvent() {
 		var events = $("#events");
 		events.append("Name: <input id='newName' class='form-control'>");
@@ -72,13 +74,7 @@
 			divisions: [],
 			registrations: []
 		};
-        $.ajax({
-            url: "https://api.myjson.com/bins",
-            type: "POST",
-            data: JSON.stringify(postData),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (ret, textStatus, jqXHR) {
+        putData(JSON.stringify(postData), function (ret) {
 				var regIds = ret.uri.split("/");
 				var newEvent = {
 					name: $('#newName').val(),
@@ -86,22 +82,15 @@
 					eventId: regIds[regIds.length -1]
 				};
 				eventData.events.push(newEvent);
-				$.ajax({
-					url: "https://api.myjson.com/bins/t63va",
-					type: "PUT",
-					data: JSON.stringify(eventData),
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					success: function (data, textStatus, jqXHR) {
+				updateJsonData(globalJson, JSON.stringify(eventData),
+					function (data, textStatus, jqXHR) {
 						location.reload();
-					}
-				});
-            }
+					});
         });
 		
 	}
     function copyEvent(id) {
-        $.get(`https://api.myjson.com/bins/${id}`, function (json) {
+        getEventData(function (json) {
             var newname = json.name + Math.floor(Math.random() * 10000);
             var postData = {
 			    name: newname,
@@ -116,33 +105,19 @@
                     classes: division.classes
                 });
             }
-            $.ajax({
-                url: "https://api.myjson.com/bins",
-                type: "POST",
-                data: JSON.stringify(postData),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (ret, textStatus, jqXHR) {
-				    var regIds = ret.uri.split("/");
-				    var newEvent = {
-					    name: newname,
-					    date: json.date,
-					    eventId: regIds[regIds.length -1]
-				    };
-				    eventData.events.push(newEvent);
-				    $.ajax({
-					    url: "https://api.myjson.com/bins/t63va",
-					    type: "PUT",
-					    data: JSON.stringify(eventData),
-					    contentType: "application/json; charset=utf-8",
-					    dataType: "json",
-					    success: function (data, textStatus, jqXHR) {
-						    location.reload();
-					    }
-				    });
-                }
-            });
-        });
+            putData(JSON.stringify(postData), function (ret) {
+				var regIds = ret.uri.split("/");
+				var newEvent = {
+					name: newname,
+					date: json.date,
+					eventId: regIds[regIds.length -1]
+				};
+				eventData.events.push(newEvent);
+				updateJsonData(globalJson, JSON.stringify(eventData), function (data) {
+					location.reload();
+				});
+			});
+        }, id);
 	}
     function deleteEvent(id) {
         var res = window.confirm("Are you sure?");
@@ -153,17 +128,16 @@
                 return;
             }
             eventData.events.splice(eventData.events.indexOf(eventToDelete), 1);
-            $.ajax({
-                url: "https://api.myjson.com/bins/t63va",
-                type: "PUT",
-                data: JSON.stringify(eventData),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (data, textStatus, jqXHR) {
-                    location.reload();
-                }
-            });
+            
+			updateJsonData(globalJson, JSON.stringify(eventData), function (data) {
+				location.reload();
+			});
         }
+	}
+	function initialize() {
+		putData({events:[]}, function(data) {
+			console.log(data);
+		});
 	}
 </script>
 

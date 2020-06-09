@@ -16,13 +16,7 @@ function submitOne() {
     })
     var regId = localStorage.getItem("regId"+eventId);
     if (!regId) {
-        $.ajax({
-            url: "https://api.myjson.com/bins",
-            type: "POST",
-            data: '{}',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (ret, textStatus, jqXHR) {
+        putData('{"stuff":1}',function (ret, textStatus, jqXHR) {
                 regId = ret.uri;
                 localStorage.setItem("regId"+eventId, regId);
                 getEventData(function () {
@@ -31,7 +25,7 @@ function submitOne() {
                     updateInfo(regId, saveData);
                 });
             }
-        });
+        );
     } else {
         updateInfo(regId, saveData);
     }
@@ -58,16 +52,7 @@ function updateInfo(regId, saveData) {
 function updateEvent() {
     var val = JSON.stringify(event);
     var eventId = param("eventId");
-    $.ajax({
-        url: `https://api.myjson.com/bins/${eventId}`,
-        type: "PUT",
-        data: val,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-
-        }
-    });
+    updateJsonData(eventId, val, function(){});
 }
 var regData = localStorage.getItem("registerOne");
 if (regData) {

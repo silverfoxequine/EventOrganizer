@@ -1,5 +1,5 @@
 var eventId = param("eventId");
-$.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
+getEventData(function (json) {
     window.data = json;
     $("#eventName").append(`${json.name} ${json.date}<i class="fa fa-pencil" onclick="editName()"></i>`);
     var divisions = $('#divisions');
@@ -14,7 +14,7 @@ $.get(`https://api.myjson.com/bins/${eventId}`, function (json) {
             container.append(`[${clazz.name}: $${clazz.price}] `);
         }
     }
-});
+}, eventId);
 function editName() {
     $("#eventName").empty();
     $("#eventName").append(`
@@ -108,16 +108,10 @@ function editDivision(name) {
 
 }
 window.updateData = function () {
+    data.registrations = ["https://jsonbox.io/box_368e23ee382d9f98d0d0//5edf7b972454c200177a2715"];
     var val = JSON.stringify(data);
     var eventId = param("eventId");
-    $.ajax({
-        url: `https://api.myjson.com/bins/${eventId}`,
-        type: "PUT",
-        data: val,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            location.reload();
-        }
+    updateJsonData(eventId, val, function (data) {
+        location.reload();
     });
 }
