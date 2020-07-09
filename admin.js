@@ -1,7 +1,7 @@
 var eventId = param("eventId");
 getEventData(function (json) {
     window.data = json;
-    $("#eventName").append(`${json.name} ${json.date}<i class="fa fa-pencil" onclick="editName()"></i>`);
+    $("#eventName").append(` ${json.date}<i class="fa fa-pencil" onclick="editName()"></i>`);
     var divisions = $('#divisions');
     for (var division of json.divisions) {
         var container = $(`<div class="list-group-item" data-id="${division.name}">${division.name} 

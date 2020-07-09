@@ -17,12 +17,22 @@ window.param = function getUrlParameter(sParam) {
 function getEventData(retFn, eventId) {
     eventId = eventId || param("eventId");
     $.get(`${JSONAPIURL}${eventId}`, function (json) {
-        //json = JSON.parse(json);
-        window.event = json;
-        $("#eventName").html(json.name);
-        $("#eventDate").html(json.date);
-        retFn && retFn(json);
+        try {
+            //json = JSON.parse(json);
+            window.event = json;
+            $("#eventName").html(json.name);
+            $("#eventDate").html(json.date);
+            retFn && retFn(json);
+        } catch (e) {
+            console.log(e);
+            errorHandle();
+        }
+    }).fail(function () {
+        errorHandle();
     });
+}
+function errorHandle() {
+    alert("Error: Event Not Found. Contact Christina to resolve.");
 }
 function updateJsonData(id, data, callback) {
     $.ajax({
