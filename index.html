@@ -48,6 +48,9 @@
 		for (var event of json.events) {
 			$("#events").append(`<a href="registrations.html?eventId=${event.eventId}" class="list-group-item list-group-item-action">
 				${event.name} : ${event.date}
+				<i class="fa fa-save" style="float:right" 
+					onclick="location.href='backup.html?eventId=${event.eventId}';return false;">
+				</i>
 				<i class="fa fa-pencil" style="float:right" 
 					onclick="location.href='admin.html?eventId=${event.eventId}';return false;">
 				</i>
