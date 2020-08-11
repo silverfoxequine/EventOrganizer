@@ -14,6 +14,12 @@ getEventData(function (json) {
             container.append(`[${clazz.name}: $${clazz.price}] `);
         }
     }
+    var youtubeCheck = $("#youtube");
+    youtubeCheck[0].checked = data.youtube;
+    youtubeCheck.click(function(){
+        data.youtube = this.checked;
+        updateData();
+    })
 }, eventId);
 function editName() {
     $("#eventName").empty();

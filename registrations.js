@@ -67,6 +67,9 @@ function del(url) {
     return false;
 }
 function toggleDetails(index) {
+    var selectingText = getSelection().toString().length > 0;
+    if (selectingText)
+        return;
     var reg = data[index];
     $(`div[data-id='regrow${index}']`).toggle();
 }

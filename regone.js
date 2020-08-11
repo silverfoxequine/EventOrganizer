@@ -35,7 +35,7 @@ function updateInfo(regId, saveData) {
     getRegData(regId, function (regJson) {
         regJson.registerOne = saveData;
         var data = JSON.stringify(saveData);
-        localStorage.setItem('registerOne', data);
+        localStorage.setItem('registerOne'+eventId, data);
         var eventId = param("eventId");
         $.ajax({
             url: regId,
@@ -54,7 +54,7 @@ function updateEvent() {
     var eventId = param("eventId");
     updateJsonData(eventId, val, function(){});
 }
-var regData = localStorage.getItem("registerOne");
+var regData = localStorage.getItem("registerOne"+eventId);
 if (regData) {
     var regDataJson = JSON.parse(regData);
     for (var item of regDataJson) {

@@ -11,7 +11,9 @@ getEventData(function () {
                     <input type="checkbox" class="form-check-input" name="${division.name}${clazz.name}">
                     ${clazz.name} : $${clazz.price}</label>
                 </div>`).appendTo(classContainer);
-            inputCont.find("input").click(makeCheckClickFunction(division, clazz))
+            if (event.youtube){
+                inputCont.find("input").click(makeCheckClickFunction(division, clazz))
+            }
         }
     }
 
@@ -23,7 +25,7 @@ getEventData(function () {
             var input = $(`input[name="${item.name}"]`);
             if (input.attr("type") == "checkbox") {
                 input[0].checked = item.value;
-                if (item.value) {
+                if (item.value && event.youtube) {
                     var youtubeData = regDataJson.filter(d => d.name == item.name + "youtube")[0];
                     if (youtubeData) {
                         input.parent().append(`<div data-id="${item.name}youtube">
@@ -77,7 +79,10 @@ function updateInfo(regId, saveData) {
     getRegData(regId, function (regJson) {
         regJson.registerTwo = saveData;
         var data = JSON.stringify(saveData);
-        localStorage.setItem('registerTwo' + eventId, data);
+        localStorage.removeItem('registerOne' + eventId);
+        localStorage.removeItem('registerTwo' + eventId);
+        localStorage.removeItem("regId" + eventId)
+        localStorage.setItem("successReg" + eventId, regId);
         $.ajax({
             url: regId,
             type: "PUT",
