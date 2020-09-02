@@ -77,6 +77,9 @@ function getAllRegistrations(data) {
     var promises = [];
     var i = 0;
     for (var reg of event.registrations) {
+        if (~reg.indexOf("5edf7b972454c200177a2715")) {
+            continue;
+        }
         promises.push(getReg(data, reg, i));
         i++;
     }

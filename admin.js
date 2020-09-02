@@ -114,7 +114,7 @@ function editDivision(name) {
 
 }
 window.updateData = function () {
-    data.registrations = ["https://jsonbox.io/box_368e23ee382d9f98d0d0//5edf7b972454c200177a2715"];
+    data.registrations = ["https://jsonbox.io/box_368e23ee382d9f98d0d0//5f501f5645b25c0017b640c3"];
     var val = JSON.stringify(data);
     var eventId = param("eventId");
     updateJsonData(eventId, val, function (data) {
